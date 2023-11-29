@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#ifndef _WIN32
+    #include <unistd.h>
+#endif
 #include <sys/select.h>
 #include <netdb.h>
 #include <sys/socket.h>
@@ -24,7 +26,8 @@ fd_set cpy_wr, cpy_rd, curr_sock;
 char msg[42], str[42 * 4096], buf[42 * 4096 + 42], tmp[42 * 4096];
 
 int fatal() {
-    write(2, "Fatal error\n", 13);
+    // write(2, "Fatal error\n", 13);
+    fprintf(stderr, "Fatal error\n");
     close(sockfd);
     exit(1);
 }
@@ -68,9 +71,7 @@ void broadcast(int senderFd, char *msg_) {
     t_client *temp = clients;
 
     while (temp) {
-        printf("%d\n", senderFd != temp->fd);
         if (senderFd != temp->fd && FD_ISSET(temp->fd, &cpy_wr)) {
-            write(1, "lmao", 5);
             if (send(temp->fd, msg_, strlen(msg_), 0) < 0)
                 fatal();
         }
@@ -144,7 +145,7 @@ void send_msg(int fd) {
 int main(int c, char **v) {
 
     if (c < 2) {
-        write(2, "Wrong number of arguments\n", 27);
+        fprintf(stderr, "Wrong number of arguments\n");
         exit(1);
     }
 
