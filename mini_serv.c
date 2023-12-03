@@ -152,7 +152,7 @@ int main(int c, char **v) {
     struct sockaddr_in servaddr;
     bzero(&servaddr, sizeof(servaddr));
 
-    servaddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(atoi(v[1]));
 
